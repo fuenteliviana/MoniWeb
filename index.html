@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moni — tu coach de gastos por chat</title>
+<meta name="description" content="Moni es una coach de gastos con inteligencia artificial. Cuéntale lo que gastas como a un amigo y ella lleva la cuenta — con humor. Disponible en México y Paraguay.">
+<style>
+  :root{--verde:#0e7a5f;--verde-osc:#0a5c48;--crema:#f7f5ef;--tinta:#1e2a26;--gris:#5c6b65}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--tinta);background:var(--crema);line-height:1.6}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+  header{padding:28px 0}
+  .logo{font-size:26px;font-weight:800;color:var(--verde)}
+  .hero{padding:36px 0 56px;display:flex;flex-wrap:wrap;gap:48px;align-items:center}
+  .hero-txt{flex:1 1 380px}
+  h1{font-size:clamp(30px,5vw,44px);line-height:1.15;margin-bottom:16px}
+  h1 em{font-style:normal;color:var(--verde)}
+  .sub{font-size:18px;color:var(--gris);margin-bottom:28px}
+  .cta{display:inline-block;background:var(--verde);color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:12px;font-size:17px}
+  .cta:hover{background:var(--verde-osc)}
+  .cta-note{font-size:13px;color:var(--gris);margin-top:10px}
+  .chat{flex:1 1 300px;max-width:360px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+  .bub{max-width:85%;padding:10px 14px;border-radius:14px;margin-bottom:10px;font-size:15px}
+  .yo{background:#dff3ec;margin-left:auto;border-bottom-right-radius:4px}
+  .moni{background:#f1efe8;border-bottom-left-radius:4px}
+  .flags{font-size:15px;color:var(--gris);margin-top:14px}
+  section{padding:44px 0;border-top:1px solid #e5e1d5}
+  h2{font-size:26px;margin-bottom:22px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .card{background:#fff;border-radius:16px;padding:22px}
+  .card h3{font-size:18px;margin-bottom:8px}
+  .card p{font-size:15px;color:var(--gris)}
+  .modo{font-size:22px}
+  footer{padding:36px 0 48px;border-top:1px solid #e5e1d5;font-size:14px;color:var(--gris)}
+  footer p{margin-bottom:8px}
+  a{color:var(--verde)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header><div class="logo">Moni 🐷</div></header>
+
+<div class="hero">
+  <div class="hero-txt">
+    <h1>Cuéntale tus gastos <em>como a un amigo</em>. Ella lleva la cuenta.</h1>
+    <p class="sub">Moni es una coach de gastos con inteligencia artificial. Le escribes "gasté 250 en el súper" por chat y ella registra, suma, te avisa en qué se te va el dinero… y si te animas, te lo dice con humor.</p>
+    <a class="cta" href="https://t.me/moneym_coach_bot">Habla con Moni en Telegram →</a>
+    <p class="cta-note">Gratis · WhatsApp muy pronto</p>
+    <p class="flags">Disponible para 🇲🇽 México y 🇵🇾 Paraguay</p>
+  </div>
+  <div class="chat" aria-label="Ejemplo de conversación con Moni">
+    <div class="bub yo">350 de rappi otra vez 🙈</div>
+    <div class="bub moni">Van $350 más a Rappi, registrado 🛵 Ya llevas $2,800 en delivery este mes… el repartidor ya te tiene como contacto favorito 💀</div>
+    <div class="bub yo">¿cuánto llevo este mes?</div>
+    <div class="bub moni">$8,200 en 14 gastos. Top: delivery ($2,800) y súper ($2,100). ¿Hacemos un reto esta semana? 👀</div>
+  </div>
+</div>
+
+<section>
+  <h2>Cómo funciona</h2>
+  <div class="grid">
+    <div class="card"><h3>1. Escríbele normal</h3><p>"gasté 250 en el súper", "50 mil del Bolt", "me cayó la quincena". Sin formularios, sin apps que abrir: es un chat.</p></div>
+    <div class="card"><h3>2. Moni registra y suma</h3><p>Entiende slang, typos y hasta varios gastos en un mensaje. Corrige con "me equivoqué, eran 200" y borra con "quita el de ayer".</p></div>
+    <div class="card"><h3>3. Te rinde cuentas</h3><p>Pregúntale cuánto llevas cuando quieras. Cada domingo te manda tu resumen semanal con lo que subió, lo que bajó y tu racha.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Elige su personalidad</h2>
+  <div class="grid">
+    <div class="card"><h3 class="modo">😌 Neutral</h3><p>Amigable y directa. Registra, suma y te cuenta cómo vas, sin drama.</p></div>
+    <div class="card"><h3 class="modo">😈 Roast</h3><p>Te dice tus verdades con cariño. Se burla del gasto, nunca de ti.</p></div>
+    <div class="card"><h3 class="modo">🔥 Hype</h3><p>Tu porrista financiera: celebra cada registro y cada peso que no gastaste.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tu privacidad</h2>
+  <div class="grid">
+    <div class="card"><h3>Tus datos son tuyos</h3><p>Tus registros se guardan únicamente para llevarte las cuentas. No vendemos ni compartimos tus datos con nadie.</p></div>
+    <div class="card"><h3>Borrado total en un mensaje</h3><p>Escribe "BORRAR MI CUENTA" en el chat y todos tus datos se eliminan de forma permanente, sin preguntas.</p></div>
+    <div class="card"><h3>Lo que Moni no es</h3><p>Moni es una coach de gastos, no una asesora financiera: no da consejos de inversión, crédito ni productos financieros.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Moni</strong> — tu coach de gastos por chat.</p>
+  <p>Contacto: <a href="mailto:jm.welcomehome@gmail.com">jm.welcomehome@gmail.com</a></p>
+  <p>© 2026 Moni. Todos los derechos reservados.</p>
+</footer>
+
+</div>
+</body>
+</html>
