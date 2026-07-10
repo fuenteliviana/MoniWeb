@@ -16,7 +16,7 @@
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--tinta);background:var(--crema);line-height:1.6}
   .wrap{max-width:960px;margin:0 auto;padding:0 24px}
   header{padding:28px 0}
-  .logo{font-size:26px;font-weight:800;color:var(--verde);display:flex;align-items:center;gap:10px}
+  .logo{font-size:26px;font-weight:800;color:var(--verde);display:flex;align-items:center;gap:10px;text-decoration:none}
   .logo img{width:44px;height:44px}
   .hero{padding:36px 0 56px;display:flex;flex-wrap:wrap;gap:48px;align-items:center}
   .hero-txt{flex:1 1 380px}
@@ -40,13 +40,14 @@
   .modo{font-size:22px}
   footer{padding:36px 0 48px;border-top:1px solid #e5e1d5;font-size:14px;color:var(--gris)}
   footer p{margin-bottom:8px}
+  .footer-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
   a{color:var(--verde)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header><div class="logo"><img src="logo.png" alt="Moni, el changuito coach de gastos">Moni</div></header>
+<header><a class="logo" href="/"><img src="logo.png" alt="Moni, el changuito coach de gastos">Moni</a></header>
 
 <div class="hero">
   <div class="hero-txt">
@@ -92,10 +93,16 @@
 </section>
 
 <footer>
-  <p><strong>Moni</strong> — tu coach de gastos por chat.</p>
-  <p>Contacto: <a href="mailto:info@holamoni.lat">info@holamoni.lat</a></p>
-  <p><a href="/terminos-y-condiciones">Términos y Condiciones</a></p>
-  <p>© 2026 Moni. Todos los derechos reservados.</p>
+  <div class="footer-row">
+    <div>
+      <p><strong>Moni</strong> — tu coach de gastos por chat.</p>
+      <p>Contacto: <a href="mailto:info@holamoni.lat">info@holamoni.lat</a></p>
+      <p>© 2026 Moni. Todos los derechos reservados.</p>
+    </div>
+    <div>
+      <p><a href="/terminos-y-condiciones">Términos y Condiciones</a></p>
+    </div>
+  </div>
 </footer>
 
 </div>
