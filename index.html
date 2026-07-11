@@ -10,6 +10,7 @@
 <meta property="og:description" content="Cuéntale tus gastos como a un amigo. Él lleva la cuenta — con humor.">
 <meta property="og:image" content="https://holamoni.lat/logo.png">
 <meta property="og:url" content="https://holamoni.lat">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   :root{--verde:#0e7a5f;--verde-osc:#0a5c48;--crema:#f7f5ef;--tinta:#1e2a26;--gris:#5c6b65}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -117,6 +118,7 @@
   <form id="feedback-form" class="feedback-form">
     <textarea id="feedback-message" placeholder="¿Qué te gustaría que Moni hiciera?" required maxlength="300"></textarea>
     <input type="email" id="feedback-email" placeholder="Tu email (opcional, por si te queremos responder)">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADzmcsVuJbCEwoQH" data-theme="light"></div>
     <button type="submit" class="cta">Enviar idea</button>
     <p class="feedback-note" id="feedback-note"></p>
   </form>
@@ -177,7 +179,13 @@
       e.preventDefault();
       var message = document.getElementById('feedback-message').value.trim();
       var email = document.getElementById('feedback-email').value.trim();
+      var turnstileToken = window.turnstile ? window.turnstile.getResponse() : '';
       if (!message) return;
+      if (!turnstileToken) {
+        feedbackNote.textContent = 'Completá la verificación antes de enviar.';
+        feedbackNote.className = 'feedback-note err';
+        return;
+      }
       var btn = feedbackForm.querySelector('button');
       btn.disabled = true;
       feedbackNote.textContent = '';
@@ -185,7 +193,7 @@
       fetch('https://moni-wh0l.onrender.com/api/website-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message, email: email || null })
+        body: JSON.stringify({ message: message, email: email || null, turnstileToken: turnstileToken })
       }).then(function(res){
         if (!res.ok) throw new Error('bad status');
         feedbackNote.textContent = '¡Gracias! Ya le llegó a nuestro equipo 🙌';
@@ -196,6 +204,8 @@
         feedbackNote.textContent = 'No se pudo enviar. Escribinos a info@holamoni.lat.';
         feedbackNote.className = 'feedback-note err';
         btn.disabled = false;
+      }).finally(function(){
+        if (window.turnstile) window.turnstile.reset();
       });
     });
   }
