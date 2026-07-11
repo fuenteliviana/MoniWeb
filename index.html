@@ -117,7 +117,7 @@
   <p class="sub">¿Te gustaría que añadiéramos alguna función a Moni? Contanos:</p>
   <form id="feedback-form" class="feedback-form">
     <textarea id="feedback-message" placeholder="¿Qué te gustaría que Moni hiciera?" required maxlength="300"></textarea>
-    <input type="email" id="feedback-email" placeholder="Tu email (opcional, por si te queremos responder)">
+    <input type="email" id="feedback-email" placeholder="Tu email" required>
     <div class="cf-turnstile" data-sitekey="0x4AAAAAADzmcsVuJbCEwoQH" data-theme="light" data-language="es"></div>
     <button type="submit" class="cta">Enviar idea</button>
     <p class="feedback-note" id="feedback-note"></p>
@@ -181,6 +181,11 @@
       var email = document.getElementById('feedback-email').value.trim();
       var turnstileToken = window.turnstile ? window.turnstile.getResponse() : '';
       if (!message) return;
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        feedbackNote.textContent = 'Ingresá un email válido.';
+        feedbackNote.className = 'feedback-note err';
+        return;
+      }
       if (!turnstileToken) {
         feedbackNote.textContent = 'Completá la verificación antes de enviar.';
         feedbackNote.className = 'feedback-note err';
@@ -193,7 +198,7 @@
       fetch('https://moni-wh0l.onrender.com/api/website-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message, email: email || null, turnstileToken: turnstileToken })
+        body: JSON.stringify({ message: message, email: email, turnstileToken: turnstileToken })
       }).then(function(res){
         if (!res.ok) throw new Error('bad status');
         feedbackNote.textContent = '¡Gracias! Ya le llegó a nuestro equipo 🙌';
