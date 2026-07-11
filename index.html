@@ -48,6 +48,14 @@
   footer p{margin-bottom:8px}
   .footer-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
   a{color:var(--verde)}
+  .feedback-form{display:flex;flex-direction:column;gap:10px;max-width:480px}
+  .feedback-form textarea,.feedback-form input{font:inherit;padding:12px 14px;border:1px solid #e5e1d5;border-radius:10px;background:#fff;color:var(--tinta)}
+  .feedback-form textarea{min-height:90px;resize:vertical}
+  .feedback-form button{align-self:flex-start;border:none;cursor:pointer;font:inherit}
+  .feedback-form button:disabled{opacity:.6;cursor:not-allowed}
+  .feedback-note{font-size:14px;margin-top:2px;min-height:1.2em}
+  .feedback-note.ok{color:var(--verde-osc)}
+  .feedback-note.err{color:#b3261e}
 </style>
 </head>
 <body>
@@ -105,8 +113,14 @@
 
 <section>
   <h2>Tu opinión importa</h2>
-  <p class="sub">Contanos qué te gustaría ver en Moni y votá las ideas de otros usuarios.</p>
-  <a class="cta" href="mailto:info@holamoni.lat?subject=Idea%20para%20Moni&body=Hola%2C%0D%0A%0D%0AMe%20gustar%C3%ADa%20que%20Moni%20pudiera...%0D%0A%0D%0A%C2%A1Gracias!">¿Te gustaría que añadiéramos alguna función a Moni?</a>
+  <p class="sub">¿Te gustaría que añadiéramos alguna función a Moni? Contanos:</p>
+  <form id="feedback-form" class="feedback-form">
+    <textarea id="feedback-message" placeholder="¿Qué te gustaría que Moni hiciera?" required maxlength="2000"></textarea>
+    <input type="email" id="feedback-email" placeholder="Tu email (opcional, por si te queremos responder)">
+    <button type="submit" class="cta">Enviar idea</button>
+    <p class="feedback-note" id="feedback-note"></p>
+  </form>
+  <p class="cta-note">O escribinos directo a <a href="mailto:info@holamoni.lat">info@holamoni.lat</a></p>
 </section>
 
 <footer>
@@ -155,6 +169,36 @@
       cta.setAttribute('aria-disabled', 'true');
     }
   });
+
+  var feedbackForm = document.getElementById('feedback-form');
+  var feedbackNote = document.getElementById('feedback-note');
+  if (feedbackForm) {
+    feedbackForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var message = document.getElementById('feedback-message').value.trim();
+      var email = document.getElementById('feedback-email').value.trim();
+      if (!message) return;
+      var btn = feedbackForm.querySelector('button');
+      btn.disabled = true;
+      feedbackNote.textContent = '';
+      feedbackNote.className = 'feedback-note';
+      fetch('https://moni-wh0l.onrender.com/api/website-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, email: email || null })
+      }).then(function(res){
+        if (!res.ok) throw new Error('bad status');
+        feedbackNote.textContent = '¡Gracias! Ya le llegó a nuestro equipo 🙌';
+        feedbackNote.className = 'feedback-note ok';
+        feedbackForm.reset();
+        btn.disabled = false;
+      }).catch(function(){
+        feedbackNote.textContent = 'No se pudo enviar. Escribinos a info@holamoni.lat.';
+        feedbackNote.className = 'feedback-note err';
+        btn.disabled = false;
+      });
+    });
+  }
 })();
 </script>
 </body>
