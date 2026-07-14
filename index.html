@@ -33,10 +33,26 @@
   .consent{display:flex;align-items:flex-start;gap:8px;margin-top:14px;max-width:380px}
   .consent input{margin-top:3px;flex-shrink:0}
   .consent label{font-size:13px;color:var(--gris)}
-  .chat{flex:1 1 300px;max-width:360px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
-  .bub{max-width:85%;padding:10px 14px;border-radius:14px;margin-bottom:10px;font-size:15px}
+  .chat{flex:1 1 300px;max-width:360px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.08);display:flex;flex-direction:column}
+  .chat-messages{min-height:220px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;margin-bottom:12px}
+  .bub{max-width:85%;padding:10px 14px;border-radius:14px;margin-bottom:10px;font-size:15px;white-space:pre-wrap}
   .yo{background:#dff3ec;margin-left:auto;border-bottom-right-radius:4px}
   .moni{background:#f1efe8;border-bottom-left-radius:4px}
+  .bub.pending{opacity:.6}
+  .bub img{max-width:100%;border-radius:8px;display:block;margin-top:6px}
+  .bub audio{margin-top:6px;max-width:100%;height:32px}
+  .icon-btn{border:none;background:#f2f0e9;color:var(--tinta);border-radius:10px;width:42px;flex-shrink:0;cursor:pointer;font-size:16px}
+  .icon-btn:disabled{opacity:.5;cursor:not-allowed}
+  .icon-btn.recording{background:#b3261e;color:#fff;animation:moni-pulse 1s infinite}
+  @keyframes moni-pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .bub-buttons{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:-4px 0 10px}
+  .bub-btn{background:#fff;border:1.5px solid var(--verde);color:var(--verde);border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit}
+  .bub-btn:hover{background:var(--verde);color:#fff}
+  .chat-inputbar{display:flex;gap:8px;border-top:1px solid #e5e1d5;padding-top:12px}
+  .chat-inputbar input{flex:1;min-width:0;border:1px solid #e5e1d5;border-radius:10px;padding:10px 12px;font:inherit;color:var(--tinta)}
+  .chat-inputbar input:disabled{background:#f2f0e9;cursor:not-allowed}
+  .chat-inputbar button{border:none;background:var(--verde);color:#fff;border-radius:10px;padding:0 16px;cursor:pointer;font:inherit;font-weight:700}
+  .chat-inputbar button:disabled{background:#a9b8b3;cursor:not-allowed}
   .flags{font-size:15px;color:var(--gris);margin-top:14px}
   section{padding:44px 0;border-top:1px solid #e5e1d5}
   h2{font-size:26px;margin-bottom:22px}
@@ -68,7 +84,6 @@
   <div class="hero-txt">
     <h1>Cuéntale tus gastos <em>como a un amigo</em>. Él lleva la cuenta.</h1>
     <p class="sub">Moni es un coach de gastos con inteligencia artificial. Le escribes "gasté 250 en el súper" por chat y él registra, suma, te avisa en qué se te va el dinero… y si te animas, te lo dice con humor.</p>
-    <a class="cta" id="cta" href="https://t.me/moni_coach_bot?start=web" aria-disabled="true">Habla con Moni en Telegram →</a>
     <p class="cta-note">Gratis · WhatsApp muy pronto</p>
     <p class="warn" id="consent-warn">Necesitas aceptar nuestros Términos y Condiciones y el Aviso de Privacidad para continuar</p>
     <div class="consent">
@@ -77,11 +92,17 @@
     </div>
     <p class="flags">Disponible para 🇲🇽 México y 🇵🇾 Paraguay</p>
   </div>
-  <div class="chat" aria-label="Ejemplo de conversación con Moni">
-    <div class="bub yo">350 de rappi otra vez 🙈</div>
-    <div class="bub moni">Van $350 más a Rappi, registrado 🛵 Ya llevas $2,800 en delivery este mes… el repartidor ya te tiene como contacto favorito 💀</div>
-    <div class="bub yo">¿cuánto llevo este mes?</div>
-    <div class="bub moni">$8,200 en 14 gastos. Top: delivery ($2,800) y súper ($2,100). ¿Hacemos un reto esta semana? 👀</div>
+  <div class="chat" aria-label="Chat con Moni">
+    <div class="chat-messages" id="chat-messages">
+      <div class="bub moni">¡Hola! 👋 Soy Moni, tu coach de gastos. Contame en qué gastaste ("gasté 250 en el súper") o preguntame lo que quieras.</div>
+    </div>
+    <div class="chat-inputbar">
+      <button type="button" id="chat-attach" class="icon-btn" disabled title="Adjuntar foto de ticket" aria-label="Adjuntar foto">📎</button>
+      <input type="file" id="chat-file" accept="image/*" hidden>
+      <input type="text" id="chat-input" placeholder="Acepta los términos para escribirle a Moni" disabled maxlength="800">
+      <button type="button" id="chat-mic" class="icon-btn" disabled title="Nota de voz" aria-label="Grabar nota de voz">🎙️</button>
+      <button type="button" id="chat-send" disabled>Enviar</button>
+    </div>
   </div>
 </div>
 
@@ -143,33 +164,187 @@
 
 <script>
 (function(){
-  var cta = document.getElementById('cta');
+  var API_BASE = 'https://moni-wh0l.onrender.com';
   var check = document.getElementById('consent-check');
   var warn = document.getElementById('consent-warn');
-  var sent = false;
+  var chatInput = document.getElementById('chat-input');
+  var chatSend = document.getElementById('chat-send');
+  var chatAttach = document.getElementById('chat-attach');
+  var chatFile = document.getElementById('chat-file');
+  var chatMic = document.getElementById('chat-mic');
+  var chatMessages = document.getElementById('chat-messages');
+  var consentSent = false;
+  var MAX_MEDIA_BYTES = 15 * 1024 * 1024;
 
-  cta.addEventListener('click', function(e){
-    if (cta.getAttribute('aria-disabled') === 'true') {
-      e.preventDefault();
-      warn.classList.add('show');
-    }
-  });
+  function setChatEnabled(enabled) {
+    chatInput.disabled = !enabled;
+    chatSend.disabled = !enabled;
+    chatAttach.disabled = !enabled;
+    chatMic.disabled = !enabled;
+    chatInput.placeholder = enabled ? 'Escríbele a Moni...' : 'Acepta los términos para escribirle a Moni';
+  }
 
   check.addEventListener('change', function(){
     if (check.checked) {
-      cta.removeAttribute('aria-disabled');
       warn.classList.remove('show');
-      if (!sent) {
-        sent = true;
-        fetch('https://moni-wh0l.onrender.com/api/consent', {
+      setChatEnabled(true);
+      if (!consentSent) {
+        consentSent = true;
+        fetch(API_BASE + '/api/consent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ accepted: true })
         }).catch(function(){});
       }
     } else {
-      cta.setAttribute('aria-disabled', 'true');
+      setChatEnabled(false);
     }
+  });
+
+  // ---- chat widget ----
+  var STORAGE_KEY = 'moni_session_id';
+  var sessionId = localStorage.getItem(STORAGE_KEY);
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem(STORAGE_KEY, sessionId);
+  }
+
+  function addBubble(role, text, buttons) {
+    var div = document.createElement('div');
+    div.className = 'bub ' + role;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    if (buttons && buttons.length) {
+      var wrap = document.createElement('div');
+      wrap.className = 'bub-buttons';
+      buttons.forEach(function (b) {
+        var el;
+        if (b.url) {
+          el = document.createElement('a');
+          el.href = b.url;
+          el.target = '_blank';
+          el.rel = 'noopener';
+        } else {
+          el = document.createElement('button');
+          el.type = 'button';
+          el.addEventListener('click', function () {
+            wrap.remove();
+            sendMessage(b.sendText, true);
+          });
+        }
+        el.className = 'bub-btn';
+        el.textContent = b.label;
+        wrap.appendChild(el);
+      });
+      chatMessages.appendChild(wrap);
+    }
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return div;
+  }
+
+  function sendMessage(text, skipUserBubble, media) {
+    text = (text || '').trim();
+    if (!text && !media) return;
+    if (!skipUserBubble) {
+      addBubble('yo', text);
+      chatInput.value = '';
+    }
+    setChatEnabled(false);
+    var pending = addBubble('moni', 'escribiendo...');
+    pending.classList.add('pending');
+    var payload = { session_id: sessionId, message: text };
+    if (media) payload.media = media;
+    fetch(API_BASE + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+    }).then(function (result) {
+      pending.remove();
+      if (!result.ok) {
+        addBubble('moni', result.data.error || 'Algo salió mal. Probá de nuevo.');
+      } else if (result.data.reply) {
+        addBubble('moni', result.data.reply.text, result.data.reply.buttons);
+      }
+      // result.data.reply === null => cooldown drop, no bubble (same as Telegram/WhatsApp)
+    }).catch(function () {
+      pending.remove();
+      addBubble('moni', 'No pude conectarme. Revisá tu conexión e intentá de nuevo.');
+    }).finally(function () {
+      setChatEnabled(check.checked);
+    });
+  }
+
+  chatSend.addEventListener('click', function () { sendMessage(chatInput.value); });
+  chatInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendMessage(chatInput.value); });
+
+  // ---- adjuntar foto de ticket ----
+  chatAttach.addEventListener('click', function () { chatFile.click(); });
+  chatFile.addEventListener('change', function () {
+    var file = chatFile.files[0];
+    chatFile.value = '';
+    if (!file) return;
+    if (file.size > MAX_MEDIA_BYTES) {
+      addBubble('moni', 'Ese archivo es muy pesado 😅 Probá con uno más chico.');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var base64 = reader.result.split(',')[1];
+      var caption = chatInput.value.trim();
+      chatInput.value = '';
+      var div = addBubble('yo', caption || '📷 Foto de ticket');
+      var img = document.createElement('img');
+      img.src = reader.result;
+      div.appendChild(img);
+      sendMessage(caption, true, { type: 'image', data: base64, mimeType: file.type || 'image/jpeg' });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---- nota de voz ----
+  var mediaRecorder = null;
+  var recordedChunks = [];
+
+  chatMic.addEventListener('click', function () {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      addBubble('moni', 'Tu navegador no permite grabar audio acá. Probá escribiendo.');
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      recordedChunks = [];
+      var mimeType = (window.MediaRecorder && MediaRecorder.isTypeSupported('audio/webm')) ? 'audio/webm' : '';
+      mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType: mimeType }) : new MediaRecorder(stream);
+      mediaRecorder.addEventListener('dataavailable', function (e) { if (e.data.size) recordedChunks.push(e.data); });
+      mediaRecorder.addEventListener('stop', function () {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        chatMic.classList.remove('recording');
+        chatMic.textContent = '🎙️';
+        var blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+        if (blob.size < 500) return; // grabación vacía/demasiado corta (cancelada casi al toque)
+        var reader = new FileReader();
+        reader.onload = function () {
+          var base64 = reader.result.split(',')[1];
+          var div = addBubble('yo', '🎙️ Nota de voz');
+          var audioEl = document.createElement('audio');
+          audioEl.controls = true;
+          audioEl.src = URL.createObjectURL(blob);
+          div.appendChild(audioEl);
+          sendMessage('', true, { type: 'audio', data: base64, mimeType: blob.type });
+        };
+        reader.readAsDataURL(blob);
+      });
+      mediaRecorder.start();
+      chatMic.classList.add('recording');
+      chatMic.textContent = '⏹️';
+    }).catch(function () {
+      addBubble('moni', 'No pude acceder al micrófono. Revisá los permisos del navegador.');
+    });
   });
 
   var feedbackForm = document.getElementById('feedback-form');
@@ -195,7 +370,7 @@
       btn.disabled = true;
       feedbackNote.textContent = '';
       feedbackNote.className = 'feedback-note';
-      fetch('https://moni-wh0l.onrender.com/api/website-feedback', {
+      fetch(API_BASE + '/api/website-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: message, email: email, turnstileToken: turnstileToken })
