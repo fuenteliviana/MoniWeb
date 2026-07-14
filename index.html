@@ -28,12 +28,7 @@
   .cta:hover{background:var(--verde-osc)}
   .cta[aria-disabled="true"]{background:#a9b8b3;cursor:not-allowed}
   .cta-note{font-size:13px;color:var(--gris);margin-top:10px}
-  .warn{font-size:13px;color:#b3261e;margin-top:10px;display:none}
-  .warn.show{display:block}
-  .consent-wrap{flex-basis:100%}
-  .consent{display:flex;align-items:flex-start;gap:8px;margin-top:14px;max-width:380px}
-  .consent input{margin-top:3px;flex-shrink:0}
-  .consent label{font-size:13px;color:var(--gris)}
+  .consent-note{flex-basis:100%;font-size:13px;color:var(--gris);margin-top:14px}
   .chat{flex:1 1 300px;max-width:360px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.08);display:flex;flex-direction:column}
   .chat-messages{min-height:220px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;margin-bottom:12px}
   .bub{max-width:85%;padding:10px 14px;border-radius:14px;margin-bottom:10px;font-size:15px;white-space:pre-wrap}
@@ -92,20 +87,14 @@
       <div class="bub moni">¡Hola! 👋 Soy Moni, tu coach de gastos. Contame en qué gastaste ("gasté 250 en el súper") o preguntame lo que quieras.</div>
     </div>
     <div class="chat-inputbar">
-      <button type="button" id="chat-attach" class="icon-btn" disabled style="display:none" title="Adjuntar foto de ticket" aria-label="Adjuntar foto">📎</button>
+      <button type="button" id="chat-attach" class="icon-btn" title="Adjuntar foto de ticket" aria-label="Adjuntar foto">📎</button>
       <input type="file" id="chat-file" accept="image/*" hidden>
-      <input type="text" id="chat-input" placeholder="Aceptá los términos ↓" disabled maxlength="800">
-      <button type="button" id="chat-mic" class="icon-btn" disabled style="display:none" title="Nota de voz" aria-label="Grabar nota de voz">🎙️</button>
-      <button type="button" id="chat-send" disabled>Enviar</button>
+      <input type="text" id="chat-input" placeholder="Escribí acá..." maxlength="800">
+      <button type="button" id="chat-mic" class="icon-btn" title="Nota de voz" aria-label="Grabar nota de voz">🎙️</button>
+      <button type="button" id="chat-send">Enviar</button>
     </div>
   </div>
-  <div class="consent-wrap">
-    <p class="warn" id="consent-warn">Necesitas aceptar nuestros Términos y Condiciones y el Aviso de Privacidad para continuar</p>
-    <div class="consent">
-      <input type="checkbox" id="consent-check">
-      <label for="consent-check">Acepto los <a href="/terminos-y-condiciones" target="_blank">Términos y Condiciones</a> y el <a href="/aviso-de-privacidad" target="_blank">Aviso de Privacidad</a> de Moni.</label>
-    </div>
-  </div>
+  <p class="consent-note">Al usar este chat, aceptás nuestros <a href="/terminos-y-condiciones" target="_blank">Términos y Condiciones</a> y el <a href="/aviso-de-privacidad" target="_blank">Aviso de Privacidad</a> de Moni.</p>
 </div>
 
 <section>
@@ -167,8 +156,6 @@
 <script>
 (function(){
   var API_BASE = 'https://moni-wh0l.onrender.com';
-  var check = document.getElementById('consent-check');
-  var warn = document.getElementById('consent-warn');
   var chatInput = document.getElementById('chat-input');
   var chatSend = document.getElementById('chat-send');
   var chatAttach = document.getElementById('chat-attach');
@@ -183,27 +170,17 @@
     chatSend.disabled = !enabled;
     chatAttach.disabled = !enabled;
     chatMic.disabled = !enabled;
-    chatAttach.style.display = enabled ? '' : 'none';
-    chatMic.style.display = enabled ? '' : 'none';
-    chatInput.placeholder = enabled ? 'Escribí acá...' : 'Aceptá los términos ↓';
   }
 
-  check.addEventListener('change', function(){
-    if (check.checked) {
-      warn.classList.remove('show');
-      setChatEnabled(true);
-      if (!consentSent) {
-        consentSent = true;
-        fetch(API_BASE + '/api/consent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accepted: true })
-        }).catch(function(){});
-      }
-    } else {
-      setChatEnabled(false);
-    }
-  });
+  function logConsentOnce() {
+    if (consentSent) return;
+    consentSent = true;
+    fetch(API_BASE + '/api/consent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accepted: true })
+    }).catch(function(){});
+  }
 
   // ---- chat widget ----
   var STORAGE_KEY = 'moni_session_id';
@@ -249,6 +226,7 @@
   function sendMessage(text, skipUserBubble, media) {
     text = (text || '').trim();
     if (!text && !media) return;
+    logConsentOnce();
     if (!skipUserBubble) {
       addBubble('yo', text);
       chatInput.value = '';
@@ -276,7 +254,7 @@
       pending.remove();
       addBubble('moni', 'No pude conectarme. Revisá tu conexión e intentá de nuevo.');
     }).finally(function () {
-      setChatEnabled(check.checked);
+      setChatEnabled(true);
     });
   }
 
