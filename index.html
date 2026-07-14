@@ -30,6 +30,7 @@
   .cta-note{font-size:13px;color:var(--gris);margin-top:10px}
   .warn{font-size:13px;color:#b3261e;margin-top:10px;display:none}
   .warn.show{display:block}
+  .consent-wrap{flex-basis:100%}
   .consent{display:flex;align-items:flex-start;gap:8px;margin-top:14px;max-width:380px}
   .consent input{margin-top:3px;flex-shrink:0}
   .consent label{font-size:13px;color:var(--gris)}
@@ -84,12 +85,6 @@
   <div class="hero-txt">
     <h1>Cuéntale tus gastos <em>como a un amigo</em>. Él lleva la cuenta.</h1>
     <p class="sub">Moni es un coach de gastos con inteligencia artificial. Le escribes "gasté 250 en el súper" por chat y él registra, suma, te avisa en qué se te va el dinero… y si te animas, te lo dice con humor.</p>
-    <p class="cta-note">Gratis · WhatsApp muy pronto</p>
-    <p class="warn" id="consent-warn">Necesitas aceptar nuestros Términos y Condiciones y el Aviso de Privacidad para continuar</p>
-    <div class="consent">
-      <input type="checkbox" id="consent-check">
-      <label for="consent-check">Acepto los <a href="/terminos-y-condiciones" target="_blank">Términos y Condiciones</a> y el <a href="/aviso-de-privacidad" target="_blank">Aviso de Privacidad</a> de Moni.</label>
-    </div>
     <p class="flags">Disponible para 🇲🇽 México y 🇵🇾 Paraguay</p>
   </div>
   <div class="chat" aria-label="Chat con Moni">
@@ -97,11 +92,18 @@
       <div class="bub moni">¡Hola! 👋 Soy Moni, tu coach de gastos. Contame en qué gastaste ("gasté 250 en el súper") o preguntame lo que quieras.</div>
     </div>
     <div class="chat-inputbar">
-      <button type="button" id="chat-attach" class="icon-btn" disabled title="Adjuntar foto de ticket" aria-label="Adjuntar foto">📎</button>
+      <button type="button" id="chat-attach" class="icon-btn" disabled style="display:none" title="Adjuntar foto de ticket" aria-label="Adjuntar foto">📎</button>
       <input type="file" id="chat-file" accept="image/*" hidden>
-      <input type="text" id="chat-input" placeholder="Acepta los términos para escribirle a Moni" disabled maxlength="800">
-      <button type="button" id="chat-mic" class="icon-btn" disabled title="Nota de voz" aria-label="Grabar nota de voz">🎙️</button>
+      <input type="text" id="chat-input" placeholder="Aceptá los términos ↓" disabled maxlength="800">
+      <button type="button" id="chat-mic" class="icon-btn" disabled style="display:none" title="Nota de voz" aria-label="Grabar nota de voz">🎙️</button>
       <button type="button" id="chat-send" disabled>Enviar</button>
+    </div>
+  </div>
+  <div class="consent-wrap">
+    <p class="warn" id="consent-warn">Necesitas aceptar nuestros Términos y Condiciones y el Aviso de Privacidad para continuar</p>
+    <div class="consent">
+      <input type="checkbox" id="consent-check">
+      <label for="consent-check">Acepto los <a href="/terminos-y-condiciones" target="_blank">Términos y Condiciones</a> y el <a href="/aviso-de-privacidad" target="_blank">Aviso de Privacidad</a> de Moni.</label>
     </div>
   </div>
 </div>
@@ -181,7 +183,9 @@
     chatSend.disabled = !enabled;
     chatAttach.disabled = !enabled;
     chatMic.disabled = !enabled;
-    chatInput.placeholder = enabled ? 'Escríbele a Moni...' : 'Acepta los términos para escribirle a Moni';
+    chatAttach.style.display = enabled ? '' : 'none';
+    chatMic.style.display = enabled ? '' : 'none';
+    chatInput.placeholder = enabled ? 'Escribí acá...' : 'Aceptá los términos ↓';
   }
 
   check.addEventListener('change', function(){
