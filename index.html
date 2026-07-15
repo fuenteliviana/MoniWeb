@@ -173,6 +173,9 @@
     chatSend.disabled = !enabled;
     chatAttach.disabled = !enabled;
     chatMic.disabled = !enabled;
+    // Disabling the input blurs it, and the browser doesn't restore focus on
+    // re-enable — without this, every reply forces a manual click back in.
+    if (enabled) chatInput.focus();
   }
 
   function logConsentOnce() {
