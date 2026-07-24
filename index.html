@@ -16,7 +16,10 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--tinta);background:var(--crema);line-height:1.6}
   .wrap{max-width:960px;margin:0 auto;padding:0 24px}
-  header{padding:28px 0}
+  header{padding:28px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  nav.nav{display:flex;gap:20px;flex-wrap:wrap}
+  nav.nav a{font-size:15px;font-weight:600;color:var(--tinta);text-decoration:none}
+  nav.nav a:hover{color:var(--verde)}
   .logo{font-size:26px;font-weight:800;color:var(--verde);display:flex;align-items:center;gap:10px;text-decoration:none}
   .logo img{width:44px;height:44px}
   .hero{padding:36px 0 56px;display:flex;flex-wrap:wrap;gap:48px;align-items:center}
@@ -93,13 +96,21 @@
 <body>
 <div class="wrap">
 
-<header><a class="logo" href="/"><img src="logo.png" alt="Moni, el changuito coach de gastos">Hola Moni</a></header>
+<header>
+  <a class="logo" href="/"><img src="logo.png" alt="Moni, el changuito coach de gastos">Hola Moni</a>
+  <nav class="nav">
+    <a href="/precios">Precios</a>
+    <a href="/preguntas-frecuentes">Preguntas Frecuentes</a>
+    <a href="/telegram">Telegram</a>
+  </nav>
+</header>
 
 <div class="hero">
   <div class="hero-txt">
     <h1>Cuéntale tus gastos <em>como a un amigo</em>. Él lleva la cuenta.</h1>
     <p class="sub">Hola Moni es un coach de gastos con inteligencia artificial. Le escribes "gasté 250 en el súper" por chat y él registra, suma, te avisa en qué se te va el dinero… y si te animas, te lo dice con humor.</p>
     <p class="flags">Disponible para 🇲🇽 México, 🇵🇾 Paraguay y 🇦🇷 Argentina</p>
+    <p class="cta-note">¿Preferís Telegram? <a href="https://t.me/moni_coach_bot" target="_blank" rel="noopener">Escribile a @moni_coach_bot →</a></p>
     <p class="consent-note">Al usar este chat, aceptás nuestros <a href="/terminos-y-condiciones" target="_blank">Términos y Condiciones</a> y el <a href="/aviso-de-privacidad" target="_blank">Aviso de Privacidad</a> de Hola Moni.</p>
   </div>
   <div class="chat" aria-label="Chat con Moni">

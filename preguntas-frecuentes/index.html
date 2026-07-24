@@ -15,7 +15,10 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--tinta);background:var(--crema);line-height:1.6}
   .wrap{max-width:820px;margin:0 auto;padding:0 24px}
-  header{padding:28px 0}
+  header{padding:28px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  nav.nav{display:flex;gap:20px;flex-wrap:wrap}
+  nav.nav a{font-size:15px;font-weight:600;color:var(--tinta);text-decoration:none}
+  nav.nav a:hover{color:var(--verde)}
   .logo{font-size:26px;font-weight:800;color:var(--verde);display:flex;align-items:center;gap:10px;text-decoration:none}
   .logo img{width:44px;height:44px}
   main{padding:20px 0 56px}
@@ -96,7 +99,14 @@
 <body>
 <div class="wrap">
 
-<header><a class="logo" href="/"><img src="../logo.png" alt="Moni, el changuito coach de gastos">Hola Moni</a></header>
+<header>
+  <a class="logo" href="/"><img src="../logo.png" alt="Moni, el changuito coach de gastos">Hola Moni</a>
+  <nav class="nav">
+    <a href="/precios">Precios</a>
+    <a href="/preguntas-frecuentes">Preguntas Frecuentes</a>
+    <a href="/telegram">Telegram</a>
+  </nav>
+</header>
 
 <main>
   <h1>Preguntas Frecuentes</h1>
